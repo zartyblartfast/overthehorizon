@@ -12,7 +12,7 @@ import {
   DEFAULT_OBSERVER_HEIGHT, 
   DEFAULT_SHIP_HEIGHT 
 } from './math/constants.js';
-import { calculateMaxVisibleDistance } from './math/horizon.js';
+import { calculateMaxVisibleDistance, calculateHorizonDistance } from './math/horizon.js';
 
 // Application state
 const state = {
@@ -89,12 +89,10 @@ function handleMainCanvasClick(event) {
     return;
   }
   
-  const rect = event.target.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  
-  // Update telescope view to center on clicked point
-  drawTelescopeView(telescopeCtx, mainCtx, x, y);
+  // For now, clicking doesn't change the telescope view
+  // The telescope view is always centered on the ship
+  // We'll just trigger a re-render
+  render();
 }
 
 /**
@@ -106,12 +104,54 @@ function render() {
   
   // Render telescope view if enabled
   if (state.telescopeEnabled) {
-    // Get ship position in main view
-    const shipX = mainCtx.canvas.width / 2;
-    const shipY = mainCtx.canvas.height / 3; // Horizon Y position
+    // Calculate ship parameters for telescope view
+    const horizonDistance = calculateHorizonDistance(state.observerHeight);
+    const maxVisibleDistance = calculateMaxVisibleDistance(state.observerHeight, state.shipHeight);
     
-    // Render telescope view centered on ship
-    drawTelescopeView(telescopeCtx, mainCtx, shipX, shipY);
+    // Base scale calculation
+    const baseScale = Math.sqrt(state.shipHeight / 50);
+    
+    // Calculate ship position, scale, and sinking amount
+    let shipScale, sinkAmount;
+    
+    // Calculate telescope visibility factor (0-1)
+    // Instead of a sudden appearance, implement a gradual rise from below the horizon
+    // Ship should start to become visible at about 70% of the horizon distance
+    // and be fully visible at the horizon
+    const visibilityStartDistance = horizonDistance * 0.7;
+    let telescopeVisibilityFactor = 0;
+    
+    if (state.shipDistance < visibilityStartDistance) {
+      // Too close to shore, not visible in telescope
+      telescopeVisibilityFactor = 0;
+    } else if (state.shipDistance <= horizonDistance) {
+      // Approaching horizon, gradually becoming visible
+      // Map distance from visibilityStartDistance to horizonDistance to a 0-1 range
+      telescopeVisibilityFactor = (state.shipDistance - visibilityStartDistance) / (horizonDistance - visibilityStartDistance);
+    } else {
+      // At or beyond horizon, fully visible in telescope
+      telescopeVisibilityFactor = 1;
+    }
+    
+    if (state.shipDistance <= horizonDistance) {
+      // Before horizon: ship is fully visible
+      shipScale = (1 - 0.75 * (state.shipDistance / horizonDistance)) * baseScale;
+      sinkAmount = 0;
+    } else {
+      // Beyond horizon: ship starts to sink
+      shipScale = 0.25 * baseScale;
+      
+      // Calculate sinking amount (0-1)
+      const distanceBeyondHorizon = state.shipDistance - horizonDistance;
+      const totalPossibleDistanceBeyondHorizon = maxVisibleDistance - horizonDistance;
+      sinkAmount = Math.min(1, distanceBeyondHorizon / totalPossibleDistanceBeyondHorizon);
+    }
+    
+    // Get horizon Y position in the telescope view
+    const telescopeHorizonY = telescopeCtx.canvas.height / 2;
+    
+    // Render telescope view with proper ship rendering
+    drawTelescopeView(telescopeCtx, mainCtx, shipScale, sinkAmount, telescopeHorizonY, telescopeVisibilityFactor);
   }
 }
 
