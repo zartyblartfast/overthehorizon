@@ -14,44 +14,95 @@ const TELESCOPE_CONSTANTS = {
   CROSSHAIR_COLOR: '#FF0000',
   CROSSHAIR_WIDTH: 1,
   MAGNIFICATION: 4, // Default magnification factor
+  SKY_COLOR: '#87CEEB',
+  SEA_COLOR: '#1E90FF',
+  HORIZON_COLOR: '#000000',
+  HORIZON_WIDTH: 1,
 };
 
 /**
  * Draws the telescope view
  * @param {CanvasRenderingContext2D} ctx - Canvas context for telescope view
  * @param {CanvasRenderingContext2D} mainCtx - Canvas context for main view (source)
- * @param {number} centerX - X-coordinate of center point in main view
- * @param {number} centerY - Y-coordinate of center point in main view
+ * @param {number} shipScale - Scale factor for the ship
+ * @param {number} sinkAmount - Amount by which the ship appears to sink (0-1)
+ * @param {number} horizonY - Y-coordinate of the horizon line
+ * @param {number} visibilityFactor - Factor determining if ship is visible in telescope (0-1)
  * @param {number} [magnification=TELESCOPE_CONSTANTS.MAGNIFICATION] - Magnification factor
  */
-function drawTelescopeView(ctx, mainCtx, centerX, centerY, magnification = TELESCOPE_CONSTANTS.MAGNIFICATION) {
+function drawTelescopeView(ctx, mainCtx, shipScale, sinkAmount, horizonY, visibilityFactor, magnification = TELESCOPE_CONSTANTS.MAGNIFICATION) {
   const width = ctx.canvas.width;
   const height = ctx.canvas.height;
+  const centerX = width / 2;
   
   // Clear telescope view
   ctx.clearRect(0, 0, width, height);
   
-  // Calculate source rectangle dimensions
-  const sourceWidth = width / magnification;
-  const sourceHeight = height / magnification;
-  const sourceX = centerX - sourceWidth / 2;
-  const sourceY = centerY - sourceHeight / 2;
+  // Draw sky and sea background with circular clipping
+  drawTelescopeBackground(ctx, width, height, horizonY);
   
-  // Draw magnified view from main canvas
-  ctx.drawImage(
-    mainCtx.canvas,
-    sourceX, sourceY, sourceWidth, sourceHeight,
-    0, 0, width, height
-  );
-  
-  // Draw circular mask
-  drawCircularMask(ctx, width, height);
+  // Only draw ship if it's close enough to the horizon to be visible in telescope
+  if (visibilityFactor > 0) {
+    // Apply telescope magnification to ship scale
+    const magnifiedShipScale = shipScale * magnification;
+    
+    // Calculate vertical offset to make ship appear to rise into view
+    // When visibilityFactor is 0, ship is completely below view
+    // When visibilityFactor is 1, ship is at the horizon
+    // Use a very small offset factor to make the transition subtle
+    // This ensures the ship's appearance matches the normal view
+    const shipHeight = 70 * magnifiedShipScale; // Approximate ship height in pixels
+    const verticalOffset = (1 - visibilityFactor) * shipHeight * 0.2; // Reduced offset factor to 0.2
+    
+    // Render ship with vertical offset to simulate rising into view
+    renderShipInTelescopeView(ctx, centerX, horizonY + verticalOffset, magnifiedShipScale, sinkAmount);
+  }
   
   // Draw crosshairs
   drawCrosshairs(ctx, width, height);
   
   // Draw telescope border
   drawTelescopeBorder(ctx, width, height);
+}
+
+/**
+ * Draws the telescope background with sky and sea
+ * @param {CanvasRenderingContext2D} ctx - Canvas context
+ * @param {number} width - Width of the canvas
+ * @param {number} height - Height of the canvas
+ * @param {number} horizonY - Y-coordinate of the horizon line
+ */
+function drawTelescopeBackground(ctx, width, height, horizonY) {
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const radius = Math.min(width, height) / 2 - TELESCOPE_CONSTANTS.BORDER_WIDTH;
+  
+  // Save context
+  ctx.save();
+  
+  // Create circular clipping path
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  ctx.clip();
+  
+  // Draw sky (top half)
+  ctx.fillStyle = TELESCOPE_CONSTANTS.SKY_COLOR;
+  ctx.fillRect(0, 0, width, horizonY);
+  
+  // Draw sea (bottom half)
+  ctx.fillStyle = TELESCOPE_CONSTANTS.SEA_COLOR;
+  ctx.fillRect(0, horizonY, width, height - horizonY);
+  
+  // Draw horizon line
+  ctx.strokeStyle = TELESCOPE_CONSTANTS.HORIZON_COLOR;
+  ctx.lineWidth = TELESCOPE_CONSTANTS.HORIZON_WIDTH;
+  ctx.beginPath();
+  ctx.moveTo(centerX - radius, horizonY);
+  ctx.lineTo(centerX + radius, horizonY);
+  ctx.stroke();
+  
+  // Restore context
+  ctx.restore();
 }
 
 /**
@@ -191,24 +242,18 @@ function renderShipInTelescopeView(ctx, x, y, scale, sinkAmount) {
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.clip();
   
-  // Create horizon clipping path
+  // Create a second clipping region that only shows content above the horizon
+  // This ensures no part of the ship below the horizon is visible
   ctx.beginPath();
-  ctx.moveTo(0, y);
-  ctx.lineTo(width, y);
-  ctx.lineTo(width, 0);
-  ctx.lineTo(0, 0);
-  ctx.closePath();
+  ctx.rect(0, 0, width, y); // Only show content above the horizon line
   ctx.clip();
   
-  // Draw ship with sinking effect
-  drawShip(ctx, x, y, scale, sinkAmount * 50); // Convert 0-1 sinking to pixel value
+  // Draw ship with the same sinking amount as in the normal view
+  // Pass sinkAmount directly without any multiplier to match normal view behavior
+  drawShip(ctx, x, y, scale, sinkAmount);
   
   // Restore context
   ctx.restore();
-  
-  // Redraw telescope elements that should be on top
-  drawCrosshairs(ctx, width, height);
-  drawTelescopeBorder(ctx, width, height);
 }
 
 // Export functions and constants
