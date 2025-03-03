@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ship Sailing Over the Horizon</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Ship Sailing Over the Horizon</h1>
+      <p>A demonstration of Earth's curvature and how ships disappear from bottom to top</p>
+    </header>
+    
+    <main>
+      <div class="view-container">
+        <div class="main-view-container">
+          <canvas id="main-view"></canvas>
+        </div>
+        
+        <div id="telescope-view-container" class="telescope-view-container">
+          <h3>Telescope View</h3>
+          <canvas id="telescope-view"></canvas>
+        </div>
+      </div>
+      
+      <div class="controls-container">
+        <div class="control-group">
+          <label for="observer-height-slider">Observer Height:</label>
+          <input type="range" id="observer-height-slider" min="1" max="100" step="1" value="2">
+          <span id="observer-height-value">2 m</span>
+        </div>
+        
+        <div class="control-group">
+          <label for="ship-height-slider">Ship Height:</label>
+          <input type="range" id="ship-height-slider" min="5" max="100" step="1" value="30">
+          <span id="ship-height-value">30 m</span>
+        </div>
+        
+        <div class="control-group">
+          <label for="ship-distance-slider">Ship Distance:</label>
+          <input type="range" id="ship-distance-slider" min="0" max="50" step="0.1" value="0">
+          <span id="ship-distance-value">0 km</span>
+        </div>
+        
+        <div class="control-group toggle-group">
+          <label for="telescope-toggle">Telescope View:</label>
+          <label class="switch">
+            <input type="checkbox" id="telescope-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        
+        <div class="control-group toggle-group">
+          <label for="animation-toggle">Animate Ship:</label>
+          <label class="switch">
+            <input type="checkbox" id="animation-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        
+        <div class="control-group">
+          <button id="reset-button" class="reset-button">Reset</button>
+        </div>
+      </div>
+    </main>
+    
+    <footer>
+      <div class="explanation">
+        <h3>How It Works</h3>
+        <p>This demonstration shows how a ship appears to sink below the horizon as it sails away from an observer. This effect is due to the curvature of the Earth.</p>
+        <p>The distance to the horizon depends on the observer's height above sea level. For an observer at 2 meters height, the horizon is about 5 kilometers away.</p>
+        <p>As the ship sails beyond the horizon, it gradually disappears from bottom to top. The hull disappears first, followed by the superstructure, and finally the masts and antennas.</p>
+        <p>Using the telescope view, you can see this effect more clearly. The telescope magnifies the view but cannot see beyond the horizon.</p>
+      </div>
+    </footer>
+  </div>
+  
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
