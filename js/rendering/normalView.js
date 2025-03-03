@@ -28,8 +28,8 @@ function renderNormalView(ctx, state) {
   ctx.clearRect(0, 0, width, height);
   drawSeaAndHorizon(ctx, horizonY);
   
-  // Draw distance markers
-  drawDistanceMarkers(ctx, horizonY, state.maxDistance, 5);
+  // Remove distance markers as they can be misleading
+  // drawDistanceMarkers(ctx, horizonY, state.maxDistance, 5);
   
   // Calculate horizon distance for observer (d0[h] in Mathematica)
   const horizonDistance = calculateHorizonDistance(state.observerHeight);

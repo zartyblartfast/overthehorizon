@@ -12,13 +12,14 @@ import {
   DEFAULT_OBSERVER_HEIGHT, 
   DEFAULT_SHIP_HEIGHT 
 } from './math/constants.js';
+import { calculateMaxVisibleDistance } from './math/horizon.js';
 
 // Application state
 const state = {
   observerHeight: DEFAULT_OBSERVER_HEIGHT,
   shipHeight: DEFAULT_SHIP_HEIGHT,
   shipDistance: 0,
-  maxDistance: 50, // Maximum distance in kilometers
+  maxDistance: calculateMaxVisibleDistance(DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT), // Calculated dynamically
   telescopeEnabled: false,
   animationEnabled: false
 };

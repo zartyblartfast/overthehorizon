@@ -4,6 +4,7 @@
  */
 
 import { DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT } from '../math/constants.js';
+import { calculateHorizonDistance, calculateMaxVisibleDistance } from '../math/horizon.js';
 
 /**
  * Sets up the UI controls
@@ -23,6 +24,10 @@ function setupControls(state, onStateChange) {
     observerHeightSlider.addEventListener('input', () => {
       state.observerHeight = parseFloat(observerHeightSlider.value);
       observerHeightValue.textContent = `${state.observerHeight} m`;
+      
+      // Update max distance and ship distance slider when observer height changes
+      updateMaxDistance(state, shipDistanceSlider);
+      
       onStateChange(state);
     });
   }
@@ -38,6 +43,10 @@ function setupControls(state, onStateChange) {
     shipHeightSlider.addEventListener('input', () => {
       state.shipHeight = parseFloat(shipHeightSlider.value);
       shipHeightValue.textContent = `${state.shipHeight} m`;
+      
+      // Update max distance and ship distance slider when ship height changes
+      updateMaxDistance(state, shipDistanceSlider);
+      
       onStateChange(state);
     });
   }
@@ -47,6 +56,9 @@ function setupControls(state, onStateChange) {
   const shipDistanceValue = document.getElementById('ship-distance-value');
   
   if (shipDistanceSlider && shipDistanceValue) {
+    // Initialize max distance based on observer and ship height
+    updateMaxDistance(state, shipDistanceSlider);
+    
     shipDistanceSlider.value = state.shipDistance || 0;
     shipDistanceValue.textContent = `${shipDistanceSlider.value} km`;
     
@@ -117,6 +129,9 @@ function setupControls(state, onStateChange) {
         shipHeightValue.textContent = `${state.shipHeight} m`;
       }
       
+      // Update max distance and ship distance slider
+      updateMaxDistance(state, shipDistanceSlider);
+      
       if (shipDistanceSlider) {
         shipDistanceSlider.value = state.shipDistance;
         shipDistanceValue.textContent = `${state.shipDistance} km`;
@@ -148,6 +163,38 @@ function setupControls(state, onStateChange) {
     animationToggle,
     resetButton
   };
+}
+
+/**
+ * Updates the maximum distance based on observer and ship height
+ * @param {Object} state - Current state of the simulation
+ * @param {HTMLElement} shipDistanceSlider - Ship distance slider element
+ */
+function updateMaxDistance(state, shipDistanceSlider) {
+  if (!shipDistanceSlider) return;
+  
+  // Calculate maximum visible distance
+  const maxVisibleDistance = calculateMaxVisibleDistance(
+    state.observerHeight,
+    state.shipHeight
+  );
+  
+  // Round up to the nearest 5 km for a cleaner UI
+  const roundedMaxDistance = Math.ceil(maxVisibleDistance / 5) * 5;
+  
+  // Update state and slider max
+  state.maxDistance = roundedMaxDistance;
+  shipDistanceSlider.max = roundedMaxDistance;
+  
+  // If current distance exceeds new max, adjust it
+  if (state.shipDistance > maxVisibleDistance) {
+    state.shipDistance = maxVisibleDistance;
+    shipDistanceSlider.value = state.shipDistance;
+    const shipDistanceValue = document.getElementById('ship-distance-value');
+    if (shipDistanceValue) {
+      shipDistanceValue.textContent = `${state.shipDistance.toFixed(1)} km`;
+    }
+  }
 }
 
 // Export functions
