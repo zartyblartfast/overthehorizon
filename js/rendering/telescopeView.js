@@ -14,6 +14,7 @@ const TELESCOPE_CONSTANTS = {
   CROSSHAIR_COLOR: '#FF0000',
   CROSSHAIR_WIDTH: 1,
   MAGNIFICATION: 4, // Default magnification factor
+  FIELD_OF_VIEW: 5, // Field of view in degrees
   SKY_COLOR: '#87CEEB',
   SEA_COLOR: '#1E90FF',
   HORIZON_COLOR: '#000000',
@@ -249,7 +250,7 @@ function renderShipInTelescopeView(ctx, x, y, scale, sinkAmount) {
   ctx.clip();
   
   // Draw ship with the same sinking amount as in the normal view
-  // Pass sinkAmount directly without any multiplier to match normal view behavior
+  // The ship will be properly clipped at the horizon line
   drawShip(ctx, x, y, scale, sinkAmount);
   
   // Restore context

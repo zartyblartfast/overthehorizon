@@ -43,16 +43,15 @@ function drawShip(ctx, x, y, scale, sinkAmount = 0) {
     // As sinkAmount increases from 0 to 1, more of the ship is hidden from bottom to top
     const hiddenHeight = shipHeight * sinkAmount;
     
-    // Apply a vertical offset to move the entire ship (including waterline) down
-    // This ensures the waterline is the first part to disappear
-    const sinkOffset = hiddenHeight * 0.5; // Adjust this multiplier to control sinking speed
+    // Apply a vertical offset to move the entire ship down (sinking effect)
+    // But don't apply any scaling that would cause compression
+    const sinkOffset = hiddenHeight;
     ctx.translate(0, sinkOffset);
     
     // Create a clipping region that only shows the part of the ship above the water
     ctx.beginPath();
     // This rectangle starts at the current water level and extends upward
-    // The -2 offset ensures the waterline is included in the clipping
-    ctx.rect(-100, -shipHeight + hiddenHeight - 2, 200, shipHeight);
+    ctx.rect(-100, -shipHeight - sinkOffset, 200, shipHeight);
     ctx.clip();
   }
   

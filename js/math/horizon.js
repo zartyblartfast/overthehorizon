@@ -104,10 +104,57 @@ function calculateMinimumVisibleHeight(distance, observerHeight, earthRadius = E
   return minHeightKm * 1000;
 }
 
+/**
+ * Calculates the distance at which a ship should start becoming visible in the telescope view
+ * @param {number} observerHeight - Height of the observer in meters
+ * @param {number} shipHeight - Height of the ship in meters
+ * @param {number} telescopeFieldOfView - Field of view of the telescope in degrees
+ * @param {number} telescopeMagnification - Magnification factor of the telescope
+ * @param {number} [earthRadius=EARTH_RADIUS] - Radius of the Earth in kilometers
+ * @returns {number} - Distance at which the ship should start appearing in telescope view in kilometers
+ */
+function calculateTelescopeVisibilityThreshold(
+  observerHeight, 
+  shipHeight, 
+  telescopeFieldOfView = 5, // Default field of view in degrees
+  telescopeMagnification = 10, // Default magnification
+  earthRadius = EARTH_RADIUS
+) {
+  // Calculate horizon distance for observer
+  const horizonDistance = calculateHorizonDistance(observerHeight, earthRadius);
+  
+  // Use a simpler approach - base the visibility threshold on the horizon distance
+  // but adjust it based on the ship's height
+  
+  // Start with a base percentage of the horizon distance
+  const basePercentage = 0.5; // 50% of horizon distance
+  
+  // Adjust based on ship height - taller ships should be visible earlier
+  // Use a logarithmic scale to handle a wide range of ship heights
+  // For the default 30m ship, this will add about 0.15 (15%)
+  const shipHeightAdjustment = 0.05 * Math.log10(shipHeight + 1);
+  
+  // Calculate the visibility threshold
+  const visibilityThreshold = horizonDistance * (basePercentage + shipHeightAdjustment);
+  
+  // Debug logging
+  console.log('Simplified telescope visibility calculation:', {
+    observerHeight,
+    shipHeight,
+    horizonDistance,
+    basePercentage,
+    shipHeightAdjustment,
+    visibilityThreshold
+  });
+  
+  return visibilityThreshold;
+}
+
 // Export functions
 export {
   calculateHorizonDistance,
   calculateMaxVisibleDistance,
   calculateVisiblePortion,
-  calculateMinimumVisibleHeight
+  calculateMinimumVisibleHeight,
+  calculateTelescopeVisibilityThreshold
 };
