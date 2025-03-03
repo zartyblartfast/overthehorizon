@@ -1,0 +1,6 @@
+# Ignore Mathematica notebook files
+*.nb
+
+# Ignore system files
+.DS_Store
+Thumbs.db
