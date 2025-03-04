@@ -90,14 +90,39 @@ canvas {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0;
+  position: relative;
+}
+
+/* Vertical dividers */
+.controls-container::before,
+.controls-container::after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  bottom: 15px;
+  width: 1px;
+  background-color: #e0e0e0;
+}
+
+.controls-container::before {
+  left: calc(33.33% - 1px);
+}
+
+.controls-container::after {
+  left: calc(66.66% - 1px);
+}
+
+.control-section {
+  padding: 0 20px;
 }
 
 .control-group {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  margin-bottom: 15px;
 }
 
 .control-group label {
@@ -138,8 +163,9 @@ canvas {
 .switch {
   position: relative;
   display: inline-block;
-  width: 60px;
-  height: 34px;
+  width: 50px;
+  height: 24px;
+  margin-left: 15px;
 }
 
 .switch input {
@@ -162,10 +188,10 @@ canvas {
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: .4s;
 }
@@ -188,6 +214,17 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+/* Refraction Control */
+.refraction-control {
+  width: 100%;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
 }
 
 /* Reset Button */
@@ -292,5 +329,14 @@ footer {
   .telescope-view-container {
     width: 100%;
     max-width: 320px;
+  }
+  
+  .controls-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .controls-container::before,
+  .controls-container::after {
+    display: none;
   }
 }

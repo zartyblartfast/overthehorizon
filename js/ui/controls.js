@@ -3,7 +3,7 @@
  * Handles user interface controls for the Over The Horizon demonstration
  */
 
-import { DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT } from '../math/constants.js';
+import { DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT, DEFAULT_REFRACTION_FACTOR } from '../math/constants.js';
 import { calculateHorizonDistance, calculateMaxVisibleDistance } from '../math/horizon.js';
 
 /**
@@ -69,6 +69,22 @@ function setupControls(state, onStateChange) {
     });
   }
   
+  // Refraction control
+  const refractionControl = document.getElementById('refraction-control');
+  
+  if (refractionControl) {
+    refractionControl.value = state.refractionFactor || DEFAULT_REFRACTION_FACTOR;
+    
+    refractionControl.addEventListener('change', () => {
+      state.refractionFactor = parseFloat(refractionControl.value);
+      
+      // Update max distance and ship distance slider when refraction changes
+      updateMaxDistance(state, shipDistanceSlider);
+      
+      onStateChange(state);
+    });
+  }
+  
   // Telescope toggle
   const telescopeToggle = document.getElementById('telescope-toggle');
   
@@ -117,6 +133,7 @@ function setupControls(state, onStateChange) {
       state.shipDistance = 0;
       state.telescopeEnabled = false;
       state.animationEnabled = false;
+      state.refractionFactor = DEFAULT_REFRACTION_FACTOR;
       
       // Update UI controls
       if (observerHeightSlider) {
@@ -135,6 +152,10 @@ function setupControls(state, onStateChange) {
       if (shipDistanceSlider) {
         shipDistanceSlider.value = state.shipDistance;
         shipDistanceValue.textContent = `${state.shipDistance} km`;
+      }
+      
+      if (refractionControl) {
+        refractionControl.value = state.refractionFactor;
       }
       
       if (telescopeToggle) {
@@ -159,6 +180,7 @@ function setupControls(state, onStateChange) {
     observerHeightSlider,
     shipHeightSlider,
     shipDistanceSlider,
+    refractionControl,
     telescopeToggle,
     animationToggle,
     resetButton
@@ -176,7 +198,9 @@ function updateMaxDistance(state, shipDistanceSlider) {
   // Calculate maximum visible distance
   const maxVisibleDistance = calculateMaxVisibleDistance(
     state.observerHeight,
-    state.shipHeight
+    state.shipHeight,
+    undefined,
+    state.refractionFactor
   );
   
   // Round up to the nearest 5 km for a cleaner UI

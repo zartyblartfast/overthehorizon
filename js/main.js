@@ -10,7 +10,8 @@ import { setupControls } from './ui/controls.js';
 import { AnimationController } from './ui/animation.js';
 import { 
   DEFAULT_OBSERVER_HEIGHT, 
-  DEFAULT_SHIP_HEIGHT 
+  DEFAULT_SHIP_HEIGHT,
+  DEFAULT_REFRACTION_FACTOR
 } from './math/constants.js';
 import { calculateMaxVisibleDistance, calculateHorizonDistance, calculateTelescopeVisibilityThreshold } from './math/horizon.js';
 
@@ -19,9 +20,10 @@ const state = {
   observerHeight: DEFAULT_OBSERVER_HEIGHT,
   shipHeight: DEFAULT_SHIP_HEIGHT,
   shipDistance: 0,
-  maxDistance: calculateMaxVisibleDistance(DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT), // Calculated dynamically
+  maxDistance: calculateMaxVisibleDistance(DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT, undefined, DEFAULT_REFRACTION_FACTOR), // Calculated dynamically
   telescopeEnabled: false,
-  animationEnabled: false
+  animationEnabled: false,
+  refractionFactor: DEFAULT_REFRACTION_FACTOR
 };
 
 // Canvas contexts
@@ -105,8 +107,8 @@ function render() {
   // Render telescope view if enabled
   if (state.telescopeEnabled) {
     // Calculate ship parameters for telescope view
-    const horizonDistance = calculateHorizonDistance(state.observerHeight);
-    const maxVisibleDistance = calculateMaxVisibleDistance(state.observerHeight, state.shipHeight);
+    const horizonDistance = calculateHorizonDistance(state.observerHeight, undefined, state.refractionFactor);
+    const maxVisibleDistance = calculateMaxVisibleDistance(state.observerHeight, state.shipHeight, undefined, state.refractionFactor);
     
     // Base scale calculation
     const baseScale = Math.sqrt(state.shipHeight / 50);
@@ -120,7 +122,9 @@ function render() {
       state.observerHeight,
       state.shipHeight,
       TELESCOPE_CONSTANTS.FIELD_OF_VIEW,
-      TELESCOPE_CONSTANTS.MAGNIFICATION
+      TELESCOPE_CONSTANTS.MAGNIFICATION,
+      undefined,
+      state.refractionFactor
     );
     
     // Debug logging
@@ -128,6 +132,7 @@ function render() {
       observerHeight: state.observerHeight,
       shipHeight: state.shipHeight,
       shipDistance: state.shipDistance,
+      refractionFactor: state.refractionFactor,
       horizonDistance,
       maxVisibleDistance,
       visibilityStartDistance,

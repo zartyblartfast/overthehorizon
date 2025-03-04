@@ -27,42 +27,62 @@
       </div>
       
       <div class="controls-container">
-        <div class="control-group">
-          <label for="observer-height-slider">Observer Height:</label>
-          <input type="range" id="observer-height-slider" min="1" max="100" step="1" value="2">
-          <span id="observer-height-value">2 m</span>
+        <!-- Section 1: Height Controls -->
+        <div class="control-section">
+          <div class="control-group">
+            <label for="observer-height-slider">Observer Height:</label>
+            <input type="range" id="observer-height-slider" min="1" max="100" step="1" value="2">
+            <span id="observer-height-value">2 m</span>
+          </div>
+          
+          <div class="control-group">
+            <label for="ship-height-slider">Ship Height:</label>
+            <input type="range" id="ship-height-slider" min="5" max="100" step="1" value="50">
+            <span id="ship-height-value">50 m</span>
+          </div>
         </div>
         
-        <div class="control-group">
-          <label for="ship-height-slider">Ship Height:</label>
-          <input type="range" id="ship-height-slider" min="5" max="100" step="1" value="50">
-          <span id="ship-height-value">50 m</span>
+        <!-- Section 2: Distance and Refraction -->
+        <div class="control-section">
+          <div class="control-group">
+            <label for="ship-distance-slider">Ship Distance:</label>
+            <input type="range" id="ship-distance-slider" min="0" max="50" step="0.1" value="0">
+            <span id="ship-distance-value">0 km</span>
+          </div>
+          
+          <div class="control-group">
+            <label for="refraction-control">Atmospheric Refraction:</label>
+            <select id="refraction-control" class="refraction-control">
+              <option value="1.0">None (k=1.0)</option>
+              <option value="1.1">Low (k=1.1)</option>
+              <option value="1.2">Medium (k=1.2)</option>
+              <option value="1.33" selected>Standard (k=1.33)</option>
+              <option value="1.5">High (k=1.5)</option>
+            </select>
+          </div>
         </div>
         
-        <div class="control-group">
-          <label for="ship-distance-slider">Ship Distance:</label>
-          <input type="range" id="ship-distance-slider" min="0" max="50" step="0.1" value="0">
-          <span id="ship-distance-value">0 km</span>
-        </div>
-        
-        <div class="control-group toggle-group">
-          <label for="telescope-toggle">Telescope View:</label>
-          <label class="switch">
-            <input type="checkbox" id="telescope-toggle">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        
-        <div class="control-group toggle-group">
-          <label for="animation-toggle">Animate Ship:</label>
-          <label class="switch">
-            <input type="checkbox" id="animation-toggle">
-            <span class="slider round"></span>
-          </label>
-        </div>
-        
-        <div class="control-group">
-          <button id="reset-button" class="reset-button">Reset</button>
+        <!-- Section 3: View Options and Reset -->
+        <div class="control-section">
+          <div class="control-group toggle-group">
+            <label for="telescope-toggle">Telescope View:</label>
+            <label class="switch">
+              <input type="checkbox" id="telescope-toggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="control-group toggle-group">
+            <label for="animation-toggle">Animate Ship:</label>
+            <label class="switch">
+              <input type="checkbox" id="animation-toggle">
+              <span class="slider round"></span>
+            </label>
+          </div>
+          
+          <div class="control-group">
+            <button id="reset-button" class="reset-button">Reset</button>
+          </div>
         </div>
       </div>
       
@@ -84,6 +104,7 @@
         <p>The distance to the horizon depends on the observer's height above sea level. For an observer at 2 meters height, the horizon is about 5 kilometers away.</p>
         <p>As the ship sails beyond the horizon, it gradually disappears from bottom to top. The hull disappears first, followed by the superstructure, and finally the masts and antennas.</p>
         <p>Using the telescope view, you can see this effect more clearly. The telescope magnifies the view but cannot see beyond the horizon.</p>
+        <p>Atmospheric refraction can increase the visible distance by effectively increasing Earth's radius. Under standard conditions (k=1.33), visibility extends about 15% further than geometric calculations would suggest.</p>
       </div>
     </footer>
   </div>
