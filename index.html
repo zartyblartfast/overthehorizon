@@ -6,6 +6,7 @@
   <title>Ship Sailing Over the Horizon</title>
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body>
   <div class="container">
@@ -93,6 +94,18 @@
         </div>
         <div class="diagram-caption">
           <p>This cross-sectional diagram illustrates how the horizon distance is calculated based on the observer's height and Earth's curvature.</p>
+        </div>
+      </div>
+      
+      <!-- New 3D Surface Plot Container -->
+      <div class="surface-plot-container">
+        <h3>Horizon Distance Visualization</h3>
+        <div id="surface-plot"></div>
+        <div class="plot-legend">
+          <div class="legend-item">
+            <div class="legend-color red-dot"></div>
+            <span>Current Settings</span>
+          </div>
         </div>
       </div>
     </main>
