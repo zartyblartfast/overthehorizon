@@ -163,27 +163,31 @@ animationToggle.addEventListener('change', () => {
 });
 
 resetButton.addEventListener('click', () => {
-  // Reset all controls to their default values
+  // Save the current telescope state before resetting
+  const currentTelescopeEnabled = telescopeToggle.checked;
+  
+  // Reset all controls to their default values except telescope toggle
   observerHeightSlider.value = 2;
   shipHeightSlider.value = 50;
   shipDistanceSlider.value = 0;
   refractionControl.value = 1.33;
-  telescopeToggle.checked = true;
+  // Preserve telescope toggle state
+  telescopeToggle.checked = currentTelescopeEnabled;
   animationToggle.checked = false;
   
-  // Update state
-  state = {
-    observerHeight: 2,
-    shipHeight: 50,
-    shipDistance: 0,
-    refractionFactor: 1.33,
-    telescopeEnabled: true,
-    animationEnabled: false
-  };
+  // Stop any ongoing animation
+  stopAnimation();
+  
+  // Update state with preserved telescope setting
+  state.observerHeight = 2;
+  state.shipHeight = 50;
+  state.shipDistance = 0;
+  state.refractionFactor = 1.33;
+  state.telescopeEnabled = currentTelescopeEnabled;
+  state.animationEnabled = false;
   
   // Update UI
-  telescopeViewContainer.style.display = 'block';
-  stopAnimation();
+  telescopeViewContainer.style.display = currentTelescopeEnabled ? 'block' : 'none';
   updateDisplayValues();
   updateViews();
 });

@@ -125,56 +125,8 @@ function setupControls(state, onStateChange) {
   // Reset button
   const resetButton = document.getElementById('reset-button');
   
-  if (resetButton) {
-    resetButton.addEventListener('click', () => {
-      // Reset to default values
-      state.observerHeight = DEFAULT_OBSERVER_HEIGHT;
-      state.shipHeight = DEFAULT_SHIP_HEIGHT;
-      state.shipDistance = 0;
-      state.telescopeEnabled = false;
-      state.animationEnabled = false;
-      state.refractionFactor = DEFAULT_REFRACTION_FACTOR;
-      
-      // Update UI controls
-      if (observerHeightSlider) {
-        observerHeightSlider.value = state.observerHeight;
-        observerHeightValue.textContent = `${state.observerHeight} m`;
-      }
-      
-      if (shipHeightSlider) {
-        shipHeightSlider.value = state.shipHeight;
-        shipHeightValue.textContent = `${state.shipHeight} m`;
-      }
-      
-      // Update max distance and ship distance slider
-      updateMaxDistance(state, shipDistanceSlider);
-      
-      if (shipDistanceSlider) {
-        shipDistanceSlider.value = state.shipDistance;
-        shipDistanceValue.textContent = `${state.shipDistance} km`;
-      }
-      
-      if (refractionControl) {
-        refractionControl.value = state.refractionFactor;
-      }
-      
-      if (telescopeToggle) {
-        telescopeToggle.checked = state.telescopeEnabled;
-        
-        // Hide telescope view
-        const telescopeView = document.getElementById('telescope-view-container');
-        if (telescopeView) {
-          telescopeView.style.display = 'none';
-        }
-      }
-      
-      if (animationToggle) {
-        animationToggle.checked = state.animationEnabled;
-      }
-      
-      onStateChange(state);
-    });
-  }
+  // Note: The reset button event listener has been moved to main.js
+  // to ensure proper handling of the telescope view state
   
   return {
     observerHeightSlider,
