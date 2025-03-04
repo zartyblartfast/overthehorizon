@@ -5,17 +5,17 @@
 
 // Constants for ship dimensions and colors
 const SHIP_COLORS = {
-  HULL: '#444444',
-  HULL_SHADOW: '#333333',
-  WATERLINE: '#000000',
-  DECK: '#666666',
-  FUNNEL_BASE: '#555555',
-  FUNNEL_BAND: '#DD0000',
-  FUNNEL_TOP: '#222222',
-  MAST: '#000000',
-  SUPERSTRUCTURE: '#777777',
-  SUPERSTRUCTURE_WINDOWS: '#AADDFF',
-  BRIDGE: '#888888'
+  HULL: '#2C3E50',          // Darker blue-gray for hull (was #444444)
+  HULL_SHADOW: '#1A2530',   // Darker shadow (was #333333)
+  WATERLINE: '#000000',     // Black waterline (unchanged)
+  DECK: '#95A5A6',          // Lighter gray for deck (was #666666)
+  FUNNEL_BASE: '#34495E',   // Darker blue-gray for funnel base (was #555555)
+  FUNNEL_BAND: '#E74C3C',   // Brighter red for funnel band (was #DD0000)
+  FUNNEL_TOP: '#222222',    // Black funnel top (unchanged)
+  MAST: '#000000',          // Black mast (unchanged)
+  SUPERSTRUCTURE: '#ECF0F1', // Much lighter for superstructure (was #777777)
+  SUPERSTRUCTURE_WINDOWS: '#3498DB', // Brighter blue for windows (was #AADDFF)
+  BRIDGE: '#BDC3C7'         // Light gray for bridge (was #888888)
 };
 
 /**

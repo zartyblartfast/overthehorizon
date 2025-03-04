@@ -10,7 +10,7 @@ const EARTH_RADIUS = 7320;
 const DEFAULT_OBSERVER_HEIGHT = 2;
 
 // Default ship height in meters
-const DEFAULT_SHIP_HEIGHT = 30;
+const DEFAULT_SHIP_HEIGHT = 50;
 
 // Ship dimensions in pixels (for rendering)
 const SHIP_DIMENSIONS = {
