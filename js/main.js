@@ -3,6 +3,9 @@
  * Main entry point for the Over The Horizon demonstration
  */
 
+// Import canvas patch first to ensure it's applied before any canvas operations
+import './ui/canvas-patch.js';
+
 import { setupCanvas } from './rendering/canvas.js';
 import { renderNormalView } from './rendering/normalView.js';
 import { drawTelescopeView, renderShipInTelescopeView, TELESCOPE_CONSTANTS } from './rendering/telescopeView.js';

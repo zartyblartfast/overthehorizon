@@ -24,6 +24,18 @@
   
   <link rel="stylesheet" href="css/reset.css">
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Add canvas optimization script before loading Plotly -->
+  <script>
+    // Patch HTMLCanvasElement.prototype.getContext to set willReadFrequently=true for 2d contexts
+    const originalGetContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function(type, attributes) {
+      if (type === '2d') {
+        attributes = attributes || {};
+        attributes.willReadFrequently = true;
+      }
+      return originalGetContext.call(this, type, attributes);
+    };
+  </script>
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 </head>
 <body>

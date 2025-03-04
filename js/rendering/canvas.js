@@ -21,8 +21,9 @@ function setupCanvas(canvasId, width, height) {
   canvas.width = width;
   canvas.height = height;
   
-  // Get 2D rendering context
-  const ctx = canvas.getContext('2d');
+  // Get 2D rendering context with willReadFrequently set to true
+  // This optimizes for multiple getImageData operations
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
   
   return { canvas, ctx };
 }
