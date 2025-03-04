@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Horizon Distance Surface Plot</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #2c3e50;
+    }
+    .plot-container {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .controls {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .control-group {
+      flex: 1;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    .value-display {
+      font-size: 14px;
+      color: #7f8c8d;
+      margin-top: 5px;
+    }
+    .button-group {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #2196f3;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0d8bf2;
+    }
+    .camera-position {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 4px;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .camera-position code {
+      flex-grow: 1;
+      padding: 8px;
+      background-color: #e0e0e0;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .copy-btn {
+      padding: 5px 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-btn:hover {
+      background-color: #45a049;
+    }
+    .info-panel {
+      background-color: #e1f5fe;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .info-panel h3 {
+      margin-top: 0;
+      color: #0277bd;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .legend-color {
+      width: 20px;
+      height: 3px;
+      margin-right: 10px;
+    }
+    .red-line {
+      background-color: rgba(255, 0, 0, 0.7);
+    }
+    .red-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Horizon Distance Surface Plot</h1>
+  
+  <div class="controls">
+    <div class="control-group">
+      <label for="observer-height">Observer Height:</label>
+      <input type="range" id="observer-height" min="1" max="96" step="1" value="2">
+      <div class="value-display" id="observer-height-value">2 meters</div>
+    </div>
+    
+    <div class="control-group">
+      <label for="refraction-factor">Atmospheric Refraction:</label>
+      <input type="range" id="refraction-factor" min="1.0" max="1.45" step="0.05" value="1.33">
+      <div class="value-display" id="refraction-factor-value">k = 1.33</div>
+    </div>
+  </div>
+  
+  <div class="plot-container">
+    <div id="surface-plot"></div>
+  </div>
+  
+  <div class="button-group">
+    <button id="reset-view">Reset View</button>
+    <button id="toggle-contours">Toggle Contours</button>
+    <button id="capture-view">Capture Current View</button>
+    <button id="use-captured-view" style="display: none;">Use Captured View</button>
+    <button id="set-as-default" style="display: none;">Set as Default</button>
+  </div>
+  
+  <div id="camera-position-display" class="camera-position" style="display: none;">
+    <span>Camera Position:</span>
+    <code id="camera-position-code"></code>
+    <button id="copy-position" class="copy-btn">Copy</button>
+  </div>
+  
+  <div class="info-panel">
+    <h3>About This Visualization</h3>
+    <p>This 3D surface plot demonstrates the relationship between observer height, atmospheric refraction, and horizon distance.</p>
+    <p>The red marker indicates the current settings, with two reference lines:</p>
+    <ul>
+      <li>A horizontal line along the X-axis showing all possible observer heights at the current refraction factor</li>
+      <li>A horizontal line along the Y-axis showing all possible refraction factors at the current observer height</li>
+    </ul>
+    <p>Use the sliders to adjust the observer height and atmospheric refraction factor to see how they affect the horizon distance.</p>
+    <p><strong>X-Axis:</strong> Observer Height (1-96 meters)</p>
+    <p><strong>Y-Axis:</strong> Atmospheric Refraction (k=1.0 to k=1.45)</p>
+    <p><strong>Z-Axis:</strong> Horizon Distance (kilometers)</p>
+    
+    <h4>Plot Elements:</h4>
+    <div class="legend-item">
+      <div class="legend-color red-dot"></div>
+      <span>Red marker: Current settings</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-color red-line"></div>
+      <span>Red lines: Reference lines showing current horizon distance</span>
+    </div>
+    
+    <p>The horizontal reference lines help you read the exact values from the 3D plot. One line runs along the X-axis at the current position, and another runs perpendicular to it along the Y-axis at the maximum observer height, both at the same horizon distance (Z value).</p>
+  </div>
+  
+  <script type="module">
+    import { createHorizonSurfacePlot } from './js/ui/surfacePlot.js';
+    import { calculateHorizonDistance } from './js/math/horizon.js';
+    import { EARTH_RADIUS } from './js/math/constants.js';
+    
+    // Load the pre-generated surface data
+    async function loadSurfaceData() {
+      try {
+        const response = await fetch('./js/data/horizonSurfaceData.json');
+        return await response.json();
+      } catch (error) {
+        console.error('Error loading surface data:', error);
+        return null;
+      }
+    }
+    
+    // Initialize the plot when the data is loaded
+    async function initPlot() {
+      const surfaceData = await loadSurfaceData();
+      if (!surfaceData) {
+        console.error('Failed to load surface data');
+        return;
+      }
+      
+      // Create the surface plot with custom preset camera position
+      const plot = createHorizonSurfacePlot('surface-plot', surfaceData, {
+        height: 600,
+        showContours: true,
+        // You can override the default preset camera position here if needed
+        // initialCameraPosition: { x: 1.25, y: -2.0, z: 0.75 }
+      });
+      
+      // Get the slider elements
+      const observerHeightSlider = document.getElementById('observer-height');
+      const refractionFactorSlider = document.getElementById('refraction-factor');
+      const observerHeightValue = document.getElementById('observer-height-value');
+      const refractionFactorValue = document.getElementById('refraction-factor-value');
+      
+      // Camera position display elements
+      const cameraPositionDisplay = document.getElementById('camera-position-display');
+      const cameraPositionCode = document.getElementById('camera-position-code');
+      const copyPositionBtn = document.getElementById('copy-position');
+      const captureViewBtn = document.getElementById('capture-view');
+      const useCapturedViewBtn = document.getElementById('use-captured-view');
+      const setAsDefaultBtn = document.getElementById('set-as-default');
+      
+      // Store captured camera position
+      let capturedCameraPosition = null;
+      
+      // Update the plot when the sliders change
+      function updatePlot() {
+        const observerHeight = parseFloat(observerHeightSlider.value);
+        const refractionFactor = parseFloat(refractionFactorSlider.value);
+        
+        // Update the value displays
+        observerHeightValue.textContent = `${observerHeight} meters`;
+        refractionFactorValue.textContent = `k = ${refractionFactor}`;
+        
+        // Update the marker on the plot
+        plot.updateCurrentPositionMarker(observerHeight, refractionFactor);
+      }
+      
+      // Function to display camera position
+      function displayCameraPosition(position) {
+        if (position) {
+          const formattedPosition = JSON.stringify(position, null, 2);
+          cameraPositionCode.textContent = formattedPosition;
+          cameraPositionDisplay.style.display = 'flex';
+        }
+      }
+      
+      // Capture current view button
+      captureViewBtn.addEventListener('click', () => {
+        capturedCameraPosition = plot.getCurrentCameraPosition();
+        if (capturedCameraPosition) {
+          displayCameraPosition(capturedCameraPosition);
+          useCapturedViewBtn.style.display = 'block';
+          setAsDefaultBtn.style.display = 'block';
+        } else {
+          alert('Could not capture camera position. Please try again after moving the view.');
+        }
+      });
+      
+      // Use captured view button
+      useCapturedViewBtn.addEventListener('click', () => {
+        if (capturedCameraPosition) {
+          Plotly.relayout('surface-plot', {
+            'scene.camera.eye': capturedCameraPosition
+          });
+        }
+      });
+      
+      // Set as default button
+      setAsDefaultBtn.addEventListener('click', () => {
+        if (capturedCameraPosition) {
+          // Set the captured position as the default reset position
+          plot.setCustomCameraPosition(capturedCameraPosition);
+          alert('This view has been set as the default reset position.');
+        }
+      });
+      
+      // Copy position button
+      copyPositionBtn.addEventListener('click', () => {
+        const textToCopy = cameraPositionCode.textContent;
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            const originalText = copyPositionBtn.textContent;
+            copyPositionBtn.textContent = 'Copied!';
+            setTimeout(() => {
+              copyPositionBtn.textContent = originalText;
+            }, 2000);
+          })
+          .catch(err => {
+            console.error('Failed to copy text: ', err);
+          });
+      });
+      
+      // Add event listeners to the sliders
+      observerHeightSlider.addEventListener('input', updatePlot);
+      refractionFactorSlider.addEventListener('input', updatePlot);
+      
+      // Toggle contours button
+      const toggleContoursButton = document.getElementById('toggle-contours');
+      let contoursVisible = true;
+      
+      toggleContoursButton.addEventListener('click', () => {
+        contoursVisible = !contoursVisible;
+        Plotly.relayout('surface-plot', {
+          'scene.contours.z.show': contoursVisible
+        });
+      });
+      
+      // Reset view button - uses the preset camera position
+      const resetViewButton = document.getElementById('reset-view');
+      resetViewButton.addEventListener('click', () => {
+        // Use the resetView function from the plot object
+        plot.resetView();
+      });
+      
+      // Initial update
+      updatePlot();
+      
+      // Handle window resize
+      window.addEventListener('resize', () => {
+        plot.resizePlot();
+      });
+      
+      // Add event listener for camera changes
+      const plotDiv = document.getElementById('surface-plot');
+      plotDiv.on('plotly_relayout', function(eventData) {
+        // Check if the camera position has changed
+        if (eventData['scene.camera']) {
+          const currentPosition = plot.getCurrentCameraPosition();
+          if (currentPosition) {
+            // Update the camera position display if it's visible
+            if (cameraPositionDisplay.style.display !== 'none') {
+              displayCameraPosition(currentPosition);
+            }
+          }
+        }
+      });
+    }
+    
+    // Initialize the plot when the page loads
+    window.addEventListener('load', initPlot);
+  </script>
+</body>
+</html>
