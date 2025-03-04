@@ -155,10 +155,10 @@ telescopeToggle.addEventListener('change', () => {
 
 animationToggle.addEventListener('change', () => {
   state.animationEnabled = animationToggle.checked;
-  if (state.animationEnabled) {
-    startAnimation();
-  } else {
-    stopAnimation();
+  
+  // Use the AnimationController for continuous back-and-forth animation
+  if (animationController) {
+    animationController.updateState(state);
   }
 });
 
@@ -176,7 +176,9 @@ resetButton.addEventListener('click', () => {
   animationToggle.checked = false;
   
   // Stop any ongoing animation
-  stopAnimation();
+  if (animationController) {
+    animationController.stop();
+  }
   
   // Update state with preserved telescope setting
   state.observerHeight = 2;
@@ -191,55 +193,6 @@ resetButton.addEventListener('click', () => {
   updateDisplayValues();
   updateViews();
 });
-
-// Animation variables
-let animationId = null;
-let animationStartTime = null;
-const ANIMATION_DURATION = 60000; // 60 seconds for full animation
-const MAX_DISTANCE = 50; // Maximum ship distance in km
-
-// Animation function
-function animateShip(timestamp) {
-  if (!animationStartTime) animationStartTime = timestamp;
-  const elapsed = timestamp - animationStartTime;
-  
-  // Calculate progress (0 to 1)
-  const progress = Math.min(elapsed / ANIMATION_DURATION, 1);
-  
-  // Update ship distance based on progress
-  state.shipDistance = progress * MAX_DISTANCE;
-  shipDistanceSlider.value = state.shipDistance;
-  
-  // Update display and views
-  updateDisplayValues();
-  updateViews();
-  
-  // Continue animation if enabled and not complete
-  if (state.animationEnabled && progress < 1) {
-    animationId = requestAnimationFrame(animateShip);
-  } else if (progress >= 1) {
-    // Animation complete, reset animation toggle
-    animationToggle.checked = false;
-    state.animationEnabled = false;
-  }
-}
-
-// Start animation
-function startAnimation() {
-  // Reset animation start time
-  animationStartTime = null;
-  
-  // Start the animation loop
-  animationId = requestAnimationFrame(animateShip);
-}
-
-// Stop animation
-function stopAnimation() {
-  if (animationId) {
-    cancelAnimationFrame(animationId);
-    animationId = null;
-  }
-}
 
 /**
  * Initializes the application
