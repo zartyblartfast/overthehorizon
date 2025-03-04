@@ -23,7 +23,7 @@ const state = {
   shipHeight: DEFAULT_SHIP_HEIGHT,
   shipDistance: 0,
   maxDistance: calculateMaxVisibleDistance(DEFAULT_OBSERVER_HEIGHT, DEFAULT_SHIP_HEIGHT, undefined, DEFAULT_REFRACTION_FACTOR), // Calculated dynamically
-  telescopeEnabled: false,
+  telescopeEnabled: true, // Enable telescope view by default
   animationEnabled: false,
   refractionFactor: DEFAULT_REFRACTION_FACTOR
 };
@@ -78,12 +78,23 @@ async function initSurfacePlot() {
   }
   
   surfacePlot = createHorizonSurfacePlot('surface-plot', surfaceData, {
-    height: 400,
-    showContours: true
+    height: 450, // Increase height to better fill the container
+    showContours: true,
+    width: null // Use responsive sizing
   });
   
   // Initial update of the marker position
   updateSurfacePlot();
+  
+  // Connect reset view button
+  const resetViewButton = document.getElementById('reset-view-button');
+  if (resetViewButton) {
+    resetViewButton.addEventListener('click', () => {
+      if (surfacePlot) {
+        surfacePlot.resetView();
+      }
+    });
+  }
 }
 
 // Update the 3D surface plot marker
@@ -154,7 +165,7 @@ resetButton.addEventListener('click', () => {
   shipHeightSlider.value = 50;
   shipDistanceSlider.value = 0;
   refractionControl.value = 1.33;
-  telescopeToggle.checked = false;
+  telescopeToggle.checked = true;
   animationToggle.checked = false;
   
   // Update state
@@ -163,12 +174,12 @@ resetButton.addEventListener('click', () => {
     shipHeight: 50,
     shipDistance: 0,
     refractionFactor: 1.33,
-    telescopeEnabled: false,
+    telescopeEnabled: true,
     animationEnabled: false
   };
   
   // Update UI
-  telescopeViewContainer.style.display = 'none';
+  telescopeViewContainer.style.display = 'block';
   stopAnimation();
   updateDisplayValues();
   updateViews();

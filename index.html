@@ -68,7 +68,7 @@
           <div class="control-group toggle-group">
             <label for="telescope-toggle">Telescope View:</label>
             <label class="switch">
-              <input type="checkbox" id="telescope-toggle">
+              <input type="checkbox" id="telescope-toggle" checked>
               <span class="slider round"></span>
             </label>
           </div>
@@ -87,24 +87,29 @@
         </div>
       </div>
       
-      <div class="math-explanation">
-        <h3>Mathematical Model</h3>
-        <div class="diagram-container">
-          <img src="assets/OTH_1.svg" alt="Cross-sectional diagram showing Earth's curvature calculations" class="explanation-diagram">
+      <div class="visualization-row">
+        <div class="math-explanation">
+          <h3>Mathematical Model</h3>
+          <div class="diagram-container">
+            <img src="assets/OTH_1.svg" alt="Cross-sectional diagram showing Earth's curvature calculations" class="explanation-diagram">
+          </div>
+          <div class="diagram-caption">
+            <p>This cross-sectional diagram illustrates how the horizon distance is calculated based on the observer's height and Earth's curvature.</p>
+          </div>
         </div>
-        <div class="diagram-caption">
-          <p>This cross-sectional diagram illustrates how the horizon distance is calculated based on the observer's height and Earth's curvature.</p>
-        </div>
-      </div>
-      
-      <!-- New 3D Surface Plot Container -->
-      <div class="surface-plot-container">
-        <h3>Horizon Distance Visualization</h3>
-        <div id="surface-plot"></div>
-        <div class="plot-legend">
-          <div class="legend-item">
-            <div class="legend-color red-dot"></div>
-            <span>Current Settings</span>
+        
+        <!-- 3D Surface Plot Container -->
+        <div class="surface-plot-container">
+          <h3>Horizon Distance Visualization</h3>
+          <div id="surface-plot"></div>
+          <div class="plot-legend">
+            <div class="legend-item">
+              <div class="legend-color red-dot"></div>
+              <span>Current Settings</span>
+            </div>
+            <div class="legend-item">
+              <button id="reset-view-button" class="reset-view-button">Reset View</button>
+            </div>
           </div>
         </div>
       </div>
@@ -112,12 +117,34 @@
     
     <footer>
       <div class="explanation">
-        <h3>How It Works</h3>
-        <p>This demonstration shows how a ship appears to sink below the horizon as it sails away from an observer. This effect is due to the curvature of the Earth.</p>
-        <p>The distance to the horizon depends on the observer's height above sea level. For an observer at 2 meters height, the horizon is about 5 kilometers away.</p>
-        <p>As the ship sails beyond the horizon, it gradually disappears from bottom to top. The hull disappears first, followed by the superstructure, and finally the masts and antennas.</p>
-        <p>Using the telescope view, you can see this effect more clearly. The telescope magnifies the view but cannot see beyond the horizon.</p>
-        <p>Atmospheric refraction can increase the visible distance by effectively increasing Earth's radius. Under standard conditions (k=1.33), visibility extends about 15% further than geometric calculations would suggest.</p>
+        <h3>The Science Behind the Horizon</h3>
+        <div class="explanation-content">
+          <div class="explanation-item">
+            <h4>Horizon Distance</h4>
+            <p>The distance to the horizon is directly related to the observer's height above sea level. For example, an observer at eye level (2 meters height) can see approximately 5 kilometers to the horizon under standard atmospheric conditions.</p>
+          </div>
+          
+          <div class="explanation-item">
+            <h4>Ship Visibility</h4>
+            <p>As a ship sails beyond the horizon, it disappears from bottom to top in a predictable sequence. First the hull vanishes, followed by the lower superstructure, and finally the highest elements like funnels, masts, and antennas remain visible the longest.</p>
+          </div>
+          
+          <div class="explanation-item">
+            <h4>Telescope Effect</h4>
+            <p>The telescope view magnifies the image, allowing for clearer observation of the ship's details. However, it's important to note that optical magnification cannot reveal portions of the ship that are geometrically hidden below the horizon.</p>
+          </div>
+          
+          <div class="explanation-item">
+            <h4>Atmospheric Refraction</h4>
+            <p>Light bends slightly as it passes through Earth's atmosphere, effectively extending visibility beyond the geometric horizon. Under standard conditions (k=1.33), this atmospheric refraction increases the visible distance by approximately 15% compared to purely geometric calculations.</p>
+          </div>
+          
+          <div class="explanation-item">
+            <h4>Interactive Exploration</h4>
+            <p>Use the controls above to adjust observer height, ship height, distance, and atmospheric conditions to see how these factors affect visibility. The 3D visualization shows the mathematical relationship between these variables.</p>
+          </div>
+        </div>
+        <p class="explanation-intro">This demonstration illustrates how a ship gradually disappears below the horizon as it sails away from an observer, providing visual evidence of Earth's curvature.</p>
       </div>
     </footer>
   </div>

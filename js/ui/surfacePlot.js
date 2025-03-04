@@ -18,7 +18,7 @@ const DEFAULT_CONFIG = {
     z: 0.5646773168385305
   },
   height: 500,
-  width: 800
+  width: null // Set to null to use responsive sizing
 };
 
 /**
@@ -71,29 +71,40 @@ function createHorizonSurfacePlot(containerId, surfaceData, config = {}) {
   
   // Create the layout
   const layout = {
-    title: 'Horizon Distance Surface Plot',
+    title: '', // Remove the title from the chart
     scene: {
       xaxis: {
         title: plotConfig.showAxesLabels ? 'Observer Height (m)' : '',
-        gridcolor: '#e0e0e0'
+        gridcolor: '#e0e0e0',
+        titlefont: { size: 10 }, // Reduce font size for x-axis label
+        tickfont: { size: 9 }    // Reduce font size for x-axis ticks
       },
       yaxis: {
         title: plotConfig.showAxesLabels ? 'Atmospheric Refraction (k)' : '',
-        gridcolor: '#e0e0e0'
+        gridcolor: '#e0e0e0',
+        titlefont: { size: 10 }, // Reduce font size for y-axis label
+        tickfont: { size: 9 }    // Reduce font size for y-axis ticks
       },
       zaxis: {
         title: plotConfig.showAxesLabels ? 'Horizon Distance (km)' : '',
-        gridcolor: '#e0e0e0'
+        gridcolor: '#e0e0e0',
+        titlefont: { size: 10 }, // Reduce font size for z-axis label
+        tickfont: { size: 9 }    // Reduce font size for z-axis ticks
       },
       camera: {
         eye: plotConfig.initialCameraPosition
+      },
+      aspectratio: {
+        x: 1, 
+        y: 1, 
+        z: 0.7 // Slightly compress the z-axis to help with vertical centering
       }
     },
-    margin: { l: 0, r: 0, b: 0, t: 50 },
+    margin: { l: 0, r: 0, b: 40, t: 40 }, // Increase both top and bottom margins
     height: plotConfig.height,
     width: plotConfig.width,
     autosize: true,
-    showlegend: true,
+    showlegend: false, // Hide legend as we'll use our custom legend
     legend: {
       x: 0,
       y: 1
@@ -107,14 +118,8 @@ function createHorizonSurfacePlot(containerId, surfaceData, config = {}) {
       'toImage', 'sendDataToCloud', 'editInChartStudio', 'zoom3d', 'pan3d', 
       'orbitRotation', 'tableRotation', 'hoverClosest3d', 'resetCameraLastSave3d', 'resetCameraDefault3d'
     ],
-    // Add our custom reset button that uses our resetView() function
-    modeBarButtonsToAdd: [{
-      name: 'Reset View',
-      icon: Plotly.Icons.home,
-      click: function(gd) {
-        resetView();
-      }
-    }],
+    // Remove the custom reset button from the mode bar
+    modeBarButtonsToAdd: [],
     displaylogo: false, // Remove Plotly logo
     responsive: true
   };
