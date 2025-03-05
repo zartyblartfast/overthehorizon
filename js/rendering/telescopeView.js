@@ -3,7 +3,7 @@
  * Handles rendering of the telescope view for the Over The Horizon demonstration
  */
 
-import { drawShip } from './ship.js';
+import { drawShip, renderSmoke } from './ship.js';
 
 /**
  * Constants for telescope view
@@ -235,7 +235,7 @@ function renderShipInTelescopeView(ctx, x, y, scale, sinkAmount) {
   const centerY = height / 2;
   const radius = Math.min(width, height) / 2 - TELESCOPE_CONSTANTS.BORDER_WIDTH;
   
-  // Save context
+  // Save context for the entire telescope view
   ctx.save();
   
   // Create circular clipping path for telescope view
@@ -243,17 +243,29 @@ function renderShipInTelescopeView(ctx, x, y, scale, sinkAmount) {
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.clip();
   
-  // Create a second clipping region that only shows content above the horizon
-  // This ensures no part of the ship below the horizon is visible
-  ctx.beginPath();
-  ctx.rect(0, 0, width, y); // Only show content above the horizon line
-  ctx.clip();
+  // Draw ship with proper horizon clipping
+  if (sinkAmount < 1) {
+    // Save context for ship rendering
+    ctx.save();
+    
+    // Create a clipping region that only shows content above the horizon
+    ctx.beginPath();
+    ctx.rect(0, 0, width, y); // Only show content above the horizon line
+    ctx.clip();
+    
+    // Draw ship with the same sinking amount as in the normal view
+    // The ship will be properly clipped at the horizon line
+    drawShip(ctx, x, y, scale, sinkAmount);
+    
+    // Restore context to remove the horizon clipping
+    ctx.restore();
+  }
   
-  // Draw ship with the same sinking amount as in the normal view
-  // The ship will be properly clipped at the horizon line
-  drawShip(ctx, x, y, scale, sinkAmount);
+  // Render smoke (will be automatically clipped by the telescope circular boundary)
+  // The renderSmoke function internally checks sinkAmount and won't render if ship is fully sunk
+  renderSmoke(ctx, x, y, scale, sinkAmount, true);
   
-  // Restore context
+  // Restore the original context
   ctx.restore();
 }
 

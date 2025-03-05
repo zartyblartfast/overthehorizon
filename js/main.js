@@ -11,6 +11,7 @@ import { renderNormalView } from './rendering/normalView.js';
 import { drawTelescopeView, renderShipInTelescopeView, TELESCOPE_CONSTANTS } from './rendering/telescopeView.js';
 import { setupControls } from './ui/controls.js';
 import { AnimationController } from './ui/animation.js';
+import { updateSmoke } from './rendering/ship.js';
 import { 
   DEFAULT_OBSERVER_HEIGHT, 
   DEFAULT_SHIP_HEIGHT,
@@ -274,6 +275,9 @@ function handleMainCanvasClick(event) {
  * Renders the application
  */
 function render() {
+  // Update smoke animation
+  updateSmoke();
+  
   // Render normal view
   renderNormalView(mainCtx, state);
   

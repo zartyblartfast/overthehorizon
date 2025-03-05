@@ -16,8 +16,14 @@ const SHIP_COLORS = {
   MAST: '#000000',          // Black mast
   SUPERSTRUCTURE: '#ECF0F1', // Light color for superstructure
   SUPERSTRUCTURE_WINDOWS: '#3498DB', // Blue for windows
-  BRIDGE: '#BDC3C7'         // Light gray for bridge
+  BRIDGE: '#BDC3C7',        // Light gray for bridge
+  SMOKE: 'rgba(200, 200, 200, 0.5)' // Semi-transparent gray for smoke
 };
+
+// Simple smoke effect variables
+let smokeOffset = 0;
+// Flag to track if smoke has been rendered in the current frame
+let smokeRenderedThisFrame = false;
 
 /**
  * Draws the complete ship at the specified position and scale
@@ -60,6 +66,7 @@ function drawShip(ctx, x, y, scale, sinkAmount = 0) {
   drawHull(ctx);
   drawSuperstructure(ctx);
   drawFunnels(ctx);
+  drawSimpleSmoke(ctx); // Add smoke after funnels
   drawMastsAndAntennas(ctx);
   
   // Restore context state
@@ -258,6 +265,102 @@ function drawMastsAndAntennas(ctx) {
 }
 
 /**
+ * Draws a simple smoke effect from the funnels
+ * @param {CanvasRenderingContext2D} ctx - Canvas context
+ */
+function drawSimpleSmoke(ctx) {
+  // Draw smoke from first funnel
+  drawSmokeFromFunnel(ctx, 0, -25, -15);
+  
+  // Draw smoke from second funnel
+  drawSmokeFromFunnel(ctx, 20, -25, -15);
+}
+
+/**
+ * Draws smoke from a single funnel
+ * @param {CanvasRenderingContext2D} ctx - Canvas context
+ * @param {number} x - X position of funnel center
+ * @param {number} y - Y position of funnel base
+ * @param {number} height - Height of funnel
+ */
+function drawSmokeFromFunnel(ctx, x, y, height) {
+  const topY = y + height; // Y position of funnel top
+  
+  // Save context for smoke effect
+  ctx.save();
+  
+  // Use a lighter composite operation for smoke
+  ctx.globalCompositeOperation = 'lighter';
+  
+  // Draw 3 smoke puffs at different heights with animation
+  for (let i = 0; i < 3; i++) {
+    const puffOffset = i * 7 + smokeOffset;
+    const puffX = x + puffOffset * 0.5; // Drift to the right as it rises
+    const puffY = topY - puffOffset;    // Rise above the funnel
+    const puffSize = 3 + i * 0.8;       // Grow as it rises
+    const opacity = Math.max(0, 0.4 - i * 0.15); // Fade as it rises
+    
+    // Draw smoke puff
+    ctx.fillStyle = `rgba(200, 200, 200, ${opacity})`;
+    ctx.beginPath();
+    ctx.arc(puffX, puffY, puffSize, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  // Restore context
+  ctx.restore();
+}
+
+/**
+ * Updates the smoke animation
+ * This should be called regularly to animate the smoke
+ */
+function updateSmoke() {
+  smokeOffset = (smokeOffset + 0.2) % 20;
+  // Reset the smoke rendered flag at the beginning of each frame
+  smokeRenderedThisFrame = false;
+}
+
+/**
+ * Renders the smoke effect for a ship
+ * @param {CanvasRenderingContext2D} ctx - Canvas context
+ * @param {number} x - X position (center of ship)
+ * @param {number} y - Y position (waterline)
+ * @param {number} scale - Scale factor for ship size
+ * @param {number} [sinkAmount=0] - Amount by which the ship appears to sink
+ * @param {boolean} [isTelescopeView=false] - Whether this is being rendered in the telescope view
+ */
+function renderSmoke(ctx, x, y, scale, sinkAmount = 0, isTelescopeView = false) {
+  // If ship is completely below horizon, don't render smoke
+  if (sinkAmount >= 1) {
+    return;
+  }
+
+  // Mark that smoke has been rendered this frame
+  smokeRenderedThisFrame = true;
+
+  // Save context state
+  ctx.save();
+  
+  // Translate to ship position
+  ctx.translate(x, y);
+  
+  // Scale the ship
+  ctx.scale(scale, scale);
+  
+  // Adjust position based on sink amount to keep smoke aligned with funnels
+  // As the ship sinks, we need to move the smoke up to match the visible portion of the ship
+  const sinkOffset = sinkAmount * 30; // Adjust this value based on ship height
+  ctx.translate(0, -sinkOffset);
+  
+  // Draw the smoke
+  drawSimpleSmoke(ctx);
+  
+  // Restore context state
+  ctx.restore();
+}
+
+/**
  * Calculates the ship's scale based on distance
  * @param {number} distance - Distance of ship from viewer in kilometers
  * @param {number} horizonDistance - Distance to the horizon in kilometers
@@ -301,5 +404,7 @@ export {
   drawShip,
   calculateShipScale,
   calculateShipSinking,
-  SHIP_COLORS
+  SHIP_COLORS,
+  updateSmoke,
+  renderSmoke
 };
