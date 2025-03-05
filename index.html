@@ -43,7 +43,46 @@
     <header>
       <h1>Ship Beyond Horizon</h1>
       <p>An interactive demonstration of Earth's curvature and how ships gradually disappear from bottom to top as they sail beyond the horizon</p>
+      <div class="menu-icon" id="menu-icon">
+        <img src="assets/align-justify-svgrepo-com.svg" alt="Menu" class="menu-icon-image">
+      </div>
+      <div class="qr-code-container" title="Scan to buy me a coffee">
+        <img src="assets/bmc_qr.png" alt="Buy Me a Coffee QR Code" class="qr-code-image">
+      </div>
     </header>
+    
+    <div class="contact-menu" id="contact-menu">
+      <div class="menu-item">
+        <span>Email:</span>
+        <a href="mailto:beyondhorizoncalc@gmail.com" class="copy-link" data-clipboard-text="beyondhorizoncalc@gmail.com">
+          beyondhorizoncalc@gmail.com
+        </a>
+      </div>
+      <div class="menu-item">
+        <span>Tip:</span>
+        <a href="https://buymeacoffee.com/beyondhorizon" target="_blank">
+          buymeacoffee.com/beyondhorizon
+        </a>
+      </div>
+      <div class="menu-item">
+        <span>X.com:</span>
+        <a href="https://x.com/BeyondHorizon_1" target="_blank">
+          x.com/BeyondHorizon_1
+        </a>
+      </div>
+      <div class="menu-item">
+        <span>Accreditation:</span>
+        <a href="https://demonstrations.wolfram.com/ShipSailingOverTheHorizon" target="_blank">
+          demonstrations.wolfram.com/ShipSailingOverTheHorizon
+        </a>
+      </div>
+      <div class="menu-item">
+        <span>Long Line of Sight Views:</span>
+        <a href="https://beyondhorizoncalc.com/" target="_blank">
+          beyondhorizoncalc.com
+        </a>
+      </div>
+    </div>
     
     <main>
       <div class="view-container">
@@ -180,5 +219,79 @@
   </div>
   
   <script type="module" src="js/main.js"></script>
+  
+  <!-- Contact Menu Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const menuIcon = document.getElementById('menu-icon');
+      const contactMenu = document.getElementById('contact-menu');
+      const copyLinks = document.querySelectorAll('.copy-link');
+      
+      // Toggle menu when icon is clicked
+      menuIcon.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent event from bubbling up
+        contactMenu.classList.toggle('active');
+        
+        // Position the menu relative to the icon
+        const iconRect = menuIcon.getBoundingClientRect();
+        contactMenu.style.top = (iconRect.bottom + 10) + 'px';
+        contactMenu.style.right = (window.innerWidth - iconRect.right) + 'px';
+      });
+      
+      // Close menu when clicking outside
+      document.addEventListener('click', function(event) {
+        if (!menuIcon.contains(event.target) && !contactMenu.contains(event.target)) {
+          contactMenu.classList.remove('active');
+        }
+      });
+      
+      // Copy email functionality
+      copyLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          if (link.classList.contains('copy-link')) {
+            e.preventDefault();
+            const textToCopy = link.getAttribute('data-clipboard-text');
+            
+            // Create a temporary textarea element to copy from
+            const textarea = document.createElement('textarea');
+            textarea.value = textToCopy;
+            textarea.style.position = 'fixed';  // Prevent scrolling to bottom
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+              // Execute copy command
+              document.execCommand('copy');
+              
+              // Visual feedback - create a temporary tooltip
+              const tooltip = document.createElement('span');
+              tooltip.textContent = 'Copied!';
+              tooltip.style.position = 'absolute';
+              tooltip.style.right = '0';
+              tooltip.style.top = '0';
+              tooltip.style.backgroundColor = '#4CAF50';
+              tooltip.style.color = 'white';
+              tooltip.style.padding = '2px 6px';
+              tooltip.style.borderRadius = '4px';
+              tooltip.style.fontSize = '0.8em';
+              tooltip.style.zIndex = '100';
+              
+              link.style.position = 'relative';
+              link.appendChild(tooltip);
+              
+              // Remove tooltip after 2 seconds
+              setTimeout(() => {
+                link.removeChild(tooltip);
+              }, 2000);
+            } catch (err) {
+              console.error('Failed to copy: ', err);
+            }
+            
+            document.body.removeChild(textarea);
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>
