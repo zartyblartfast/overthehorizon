@@ -76,8 +76,8 @@ function renderNormalView(ctx, state) {
     // Draw ship directly (no clipping needed before horizon)
     drawShip(ctx, shipX, shipY, shipScale, sinkAmount);
     
-    // Render smoke for the ship
-    renderSmoke(ctx, shipX, shipY, shipScale, sinkAmount);
+    // Smoke rendering disabled
+    // renderSmoke(ctx, shipX, shipY, shipScale, sinkAmount);
   } else {
     // Beyond horizon: ship stays at horizon X position but sinks below horizon
     shipX = horizonX; // Fixed at horizon X position

@@ -263,7 +263,8 @@ function renderShipInTelescopeView(ctx, x, y, scale, sinkAmount) {
   
   // Render smoke (will be automatically clipped by the telescope circular boundary)
   // The renderSmoke function internally checks sinkAmount and won't render if ship is fully sunk
-  renderSmoke(ctx, x, y, scale, sinkAmount, true);
+  // Smoke rendering disabled
+  // renderSmoke(ctx, x, y, scale, sinkAmount, true);
   
   // Restore the original context
   ctx.restore();

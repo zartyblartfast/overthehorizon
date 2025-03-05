@@ -193,6 +193,9 @@ resetButton.addEventListener('click', () => {
   telescopeViewContainer.style.display = currentTelescopeEnabled ? 'block' : 'none';
   updateDisplayValues();
   updateViews();
+  
+  // Notify state change to trigger rendering
+  handleStateChange(state);
 });
 
 /**
