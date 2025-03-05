@@ -38,15 +38,53 @@ Using Earth radius R = 7320 km:
    maxVisibleDistance = 3.82 + 20.9 ≈ 24.7 km
    ```
 
-## Problem with Current Implementation
+## Current Implementation
 
-In the current JavaScript implementation, when the observer is at minimum height (1-2 meters), the maximum distance is set to 50 km, which is much too far based on the mathematical calculations.
+The JavaScript implementation correctly calculates these distances:
 
-For an observer at 2 meters height and a ship of 30 meters height:
+```javascript
+// Calculate horizon distance for observer
+function calculateHorizonDistance(observerHeight, earthRadius = EARTH_RADIUS, refractionFactor = 1.0) {
+  const observerHeightKm = observerHeight / 1000;
+  const effectiveEarthRadius = earthRadius * refractionFactor;
+  return Math.sqrt(2 * effectiveEarthRadius * observerHeightKm);
+}
+
+// Calculate maximum visible distance
+function calculateMaxVisibleDistance(observerHeight, objectHeight, earthRadius = EARTH_RADIUS, refractionFactor = 1.0) {
+  const observerHorizonDistance = calculateHorizonDistance(observerHeight, earthRadius, refractionFactor);
+  const objectHorizonDistance = calculateHorizonDistance(objectHeight, earthRadius, refractionFactor);
+  return observerHorizonDistance + objectHorizonDistance;
+}
 ```
-d0[2] = Sqrt[2 * 7320 * 0.001 * 2] ≈ 5.4 km
-d1[30] = Sqrt[2 * 7320 * 0.001 * 30] ≈ 20.9 km
-maxVisibleDistance = 5.4 + 20.9 ≈ 26.3 km
+
+The application dynamically adjusts the maximum distance based on the current parameters:
+
+```javascript
+// Round up to the nearest 5 km for a cleaner UI
+const roundedMaxDistance = Math.ceil(maxVisibleDistance / 5) * 5;
+
+// Update state and slider max
+state.maxDistance = roundedMaxDistance;
+shipDistanceSlider.max = roundedMaxDistance;
 ```
 
-This suggests the maximum distance should be around 26-27 km, not 50 km.
+For example, with default values:
+- Observer height: 2 meters
+- Ship height: 50 meters
+- Refraction factor: 1.33
+
+The calculated maximum visible distance would be approximately:
+```
+d0[2] with refraction = Sqrt[2 * 7320 * 1.33 * 0.001 * 2] ≈ 6.2 km
+d1[50] with refraction = Sqrt[2 * 7320 * 1.33 * 0.001 * 50] ≈ 31.2 km
+maxVisibleDistance = 6.2 + 31.2 ≈ 37.4 km
+```
+
+This would be rounded up to 40 km for the slider maximum.
+
+## Original Source
+
+The formulas presented in this document are derived from the Wolfram Demonstrations Project's "Ship Sailing over the Horizon" demonstration. The original Mathematica notebook can be found in the `/original-source` directory.
+
+For more information about the original source and how it was adapted for this web implementation, please refer to the [Original Source Reference](../original-source-reference.md) documentation.
