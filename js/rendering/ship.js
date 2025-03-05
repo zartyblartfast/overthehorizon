@@ -5,17 +5,18 @@
 
 // Constants for ship dimensions and colors
 const SHIP_COLORS = {
-  HULL: '#2C3E50',          // Darker blue-gray for hull (was #444444)
-  HULL_SHADOW: '#1A2530',   // Darker shadow (was #333333)
-  WATERLINE: '#000000',     // Black waterline (unchanged)
-  DECK: '#95A5A6',          // Lighter gray for deck (was #666666)
-  FUNNEL_BASE: '#34495E',   // Darker blue-gray for funnel base (was #555555)
-  FUNNEL_BAND: '#E74C3C',   // Brighter red for funnel band (was #DD0000)
-  FUNNEL_TOP: '#222222',    // Black funnel top (unchanged)
-  MAST: '#000000',          // Black mast (unchanged)
-  SUPERSTRUCTURE: '#ECF0F1', // Much lighter for superstructure (was #777777)
-  SUPERSTRUCTURE_WINDOWS: '#3498DB', // Brighter blue for windows (was #AADDFF)
-  BRIDGE: '#BDC3C7'         // Light gray for bridge (was #888888)
+  HULL: '#2C3E50',          // Darker blue-gray for hull
+  HULL_SHADOW: '#1A2530',   // Darker shadow
+  HULL_HIGHLIGHT: '#3D5A73', // Lighter highlight for hull
+  WATERLINE: '#000000',     // Black waterline
+  DECK: '#95A5A6',          // Lighter gray for deck
+  FUNNEL_BASE: '#34495E',   // Darker blue-gray for funnel base
+  FUNNEL_BAND: '#E74C3C',   // Brighter red for funnel band
+  FUNNEL_TOP: '#222222',    // Black funnel top
+  MAST: '#000000',          // Black mast
+  SUPERSTRUCTURE: '#ECF0F1', // Light color for superstructure
+  SUPERSTRUCTURE_WINDOWS: '#3498DB', // Blue for windows
+  BRIDGE: '#BDC3C7'         // Light gray for bridge
 };
 
 /**
@@ -70,15 +71,15 @@ function drawShip(ctx, x, y, scale, sinkAmount = 0) {
  * @param {CanvasRenderingContext2D} ctx - Canvas context
  */
 function drawHull(ctx) {
-  // Main hull (gray)
+  // Main hull
   ctx.fillStyle = SHIP_COLORS.HULL;
   ctx.beginPath();
   ctx.moveTo(-50, 0);        // Start at stern at waterline
   ctx.lineTo(50, 0);         // To bow at waterline
-  ctx.lineTo(60, -5);        // Up to bow point
-  ctx.lineTo(40, -10);       // Down to deck at bow
+  ctx.lineTo(65, -5);        // Up to bow point (more pronounced)
+  ctx.lineTo(65, -10);       // Up to deck level at bow (keeping deck level)
   ctx.lineTo(-40, -10);      // Back to deck at stern
-  ctx.lineTo(-45, -5);       // Up to stern point
+  ctx.lineTo(-55, -5);       // Up to stern point (more pronounced)
   ctx.closePath();
   ctx.fill();
   
@@ -89,6 +90,16 @@ function drawHull(ctx) {
   ctx.lineTo(50, 0);
   ctx.lineTo(50, -3);
   ctx.lineTo(-50, -3);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Hull highlight (adds dimension)
+  ctx.fillStyle = SHIP_COLORS.HULL_HIGHLIGHT;
+  ctx.beginPath();
+  ctx.moveTo(-40, -8);
+  ctx.lineTo(65, -8);       // Extended to the bow
+  ctx.lineTo(65, -10);      // Up to deck level at bow
+  ctx.lineTo(-40, -10);     // Back to deck at stern
   ctx.closePath();
   ctx.fill();
   
@@ -106,8 +117,8 @@ function drawHull(ctx) {
   ctx.fillStyle = SHIP_COLORS.DECK;
   ctx.beginPath();
   ctx.moveTo(-40, -10);      // Start at stern deck
-  ctx.lineTo(40, -10);       // To bow deck
-  ctx.lineTo(40, -11);       // Down to deck edge at bow
+  ctx.lineTo(65, -10);       // To bow deck (extended to meet the bow point)
+  ctx.lineTo(65, -11);       // Down to deck edge at bow
   ctx.lineTo(-40, -11);      // Back to deck edge at stern
   ctx.closePath();
   ctx.fill();
@@ -118,32 +129,36 @@ function drawHull(ctx) {
  * @param {CanvasRenderingContext2D} ctx - Canvas context
  */
 function drawSuperstructure(ctx) {
-  // Main superstructure block
+  // Main superstructure block - moved forward
   ctx.fillStyle = SHIP_COLORS.SUPERSTRUCTURE;
   ctx.beginPath();
-  ctx.rect(-30, -25, 50, 14);
+  ctx.rect(-20, -25, 50, 14); // Moved 10 units forward (was -30)
   ctx.fill();
   
-  // Bridge (higher part of superstructure)
+  // Bridge (higher part of superstructure at the forward part)
   ctx.fillStyle = SHIP_COLORS.BRIDGE;
   ctx.beginPath();
-  ctx.rect(-20, -32, 25, 7);
+  ctx.rect(15, -32, 15, 7); // Moved 10 units forward (was 5)
   ctx.fill();
   
-  // Windows on main superstructure
+  // Windows on main superstructure (more evenly spaced)
   ctx.fillStyle = SHIP_COLORS.SUPERSTRUCTURE_WINDOWS;
-  for (let i = -25; i < 15; i += 7) {
+  for (let i = -15; i < 25; i += 6) { // Adjusted starting point (was -25)
     ctx.beginPath();
-    ctx.rect(i, -22, 5, 3);
+    ctx.rect(i, -22, 4, 3);
     ctx.fill();
   }
   
-  // Windows on bridge
-  for (let i = -15; i < 0; i += 7) {
-    ctx.beginPath();
-    ctx.rect(i, -30, 5, 3);
-    ctx.fill();
-  }
+  // Window on bridge (side view) - moved to the front of the bridge
+  ctx.beginPath();
+  ctx.rect(26, -30, 3, 3); // Moved 10 units forward (was 16)
+  ctx.fill();
+  
+  // Bridge wing visible from side view (just a small protrusion)
+  ctx.fillStyle = SHIP_COLORS.BRIDGE;
+  ctx.beginPath();
+  ctx.rect(28, -30, 3, 3); // Moved 10 units forward (was 18)
+  ctx.fill();
 }
 
 /**
@@ -151,9 +166,9 @@ function drawSuperstructure(ctx) {
  * @param {CanvasRenderingContext2D} ctx - Canvas context
  */
 function drawFunnels(ctx) {
-  // Draw two funnels
-  drawFunnel(ctx, -10, -25, 8, 15);
-  drawFunnel(ctx, 10, -25, 8, 15);
+  // Draw two funnels - moved forward
+  drawFunnel(ctx, 0, -25, 8, 15);  // Moved 10 units forward (was -10)
+  drawFunnel(ctx, 20, -25, 8, 15); // Moved 10 units forward (was 10)
 }
 
 /**
@@ -179,7 +194,7 @@ function drawFunnel(ctx, x, y, width, height) {
   
   // Funnel band (red)
   const bandHeight = height * 0.15;
-  const bandY = y - height + bandHeight;
+  const bandY = y - height + bandHeight * 2;
   const bandWidthFactor = 0.85;
   
   ctx.fillStyle = SHIP_COLORS.FUNNEL_BAND;
@@ -206,28 +221,39 @@ function drawMastsAndAntennas(ctx) {
   ctx.strokeStyle = SHIP_COLORS.MAST;
   ctx.lineWidth = 1;
   
-  // Forward mast
+  // Forward mast - moved forward
   ctx.beginPath();
-  ctx.moveTo(15, -32);
-  ctx.lineTo(15, -60);
+  ctx.moveTo(25, -32); // Moved 10 units forward (was 15)
+  ctx.lineTo(25, -60); // Moved 10 units forward (was 15)
   ctx.stroke();
   
   // Antenna on forward mast
   ctx.beginPath();
-  ctx.moveTo(15, -60);
-  ctx.lineTo(25, -70);
+  ctx.moveTo(25, -60); // Moved 10 units forward (was 15)
+  ctx.lineTo(35, -70); // Moved 10 units forward (was 25)
   ctx.stroke();
   
-  // Aft mast
+  // Radar on forward mast
   ctx.beginPath();
-  ctx.moveTo(-15, -32);
-  ctx.lineTo(-15, -50);
+  ctx.arc(25, -55, 3, 0, Math.PI * 2); // Moved 10 units forward (was 15)
+  ctx.stroke();
+  
+  // Aft mast - moved forward
+  ctx.beginPath();
+  ctx.moveTo(-5, -32); // Moved 10 units forward (was -15)
+  ctx.lineTo(-5, -50); // Moved 10 units forward (was -15)
   ctx.stroke();
   
   // Cross piece on aft mast
   ctx.beginPath();
-  ctx.moveTo(-20, -45);
-  ctx.lineTo(-10, -45);
+  ctx.moveTo(-10, -45); // Moved 10 units forward (was -20)
+  ctx.lineTo(0, -45);   // Moved 10 units forward (was -10)
+  ctx.stroke();
+  
+  // Small antenna on aft mast
+  ctx.beginPath();
+  ctx.moveTo(-5, -50);  // Moved 10 units forward (was -15)
+  ctx.lineTo(0, -55);   // Moved 10 units forward (was -10)
   ctx.stroke();
 }
 
